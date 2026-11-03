@@ -38,7 +38,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'drm-refresh'
+          app-name: 'drm-refresh-e6aph2hkemceegb4.westus3-01'
           slot-name: 'Production'
           package: app.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DE2B9BAA483D47C089323DF4E73F7696 }}
