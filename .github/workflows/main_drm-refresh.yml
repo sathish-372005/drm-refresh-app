@@ -20,7 +20,7 @@ jobs:
 
       - name: Install and build
         run: |
-          npm i
+          npm install --legacy-peer-deps
           npm run build
 
       - name: Prepare standalone package
@@ -40,4 +40,5 @@ jobs:
         with:
           app-name: 'drm-refresh'
           package: app.zip
+          clean: true
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DE2B9BAA483D47C089323DF4E73F7696 }}
