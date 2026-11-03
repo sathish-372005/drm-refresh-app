@@ -5,7 +5,7 @@ import * as teams from "@microsoft/teams-js";
 
 type Me = { name: string | null; email: string | null; tenantId: string; userId: string };
 
-export default function Home() {
+export default function Sample() {
   const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
 
