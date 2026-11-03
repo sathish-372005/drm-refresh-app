@@ -46,7 +46,6 @@ export const SamplePage = () => {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <h1>Hello {user.name}</h1>
-
       <p>Email: {user.email}</p>
       <p>Tenant ID: {user.tenantId}</p>
       <p>User ID: {user.userId}</p>
