@@ -34,13 +34,11 @@ jobs:
           cd deploy
           zip -qr ../app.zip .
 
-      - name: Deploy to Azure Web App (Zip Deploy)
-        env:
-          KUDU_USER: ${{ secrets.KUDU_USER }}
-          KUDU_PASS: ${{ secrets.KUDU_PASS }}
-        run: |
-          curl --fail-with-body -sS --max-time 600 -X POST \
-            -u "$KUDU_USER:$KUDU_PASS" \
-            -H "Content-Type: application/zip" \
-            --data-binary @app.zip \
-            "https://drm-refresh-e6aph2hkemceegb4.scm.westus3-01.azurewebsites.net/api/zipdeploy"
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'drm-refresh'
+          slot-name: 'Production'
+          package: app.zip
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DE2B9BAA483D47C089323DF4E73F7696 }}
