@@ -1,0 +1,42 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.30/MicrosoftTeams.schema.json",
+  "version": "1.0.1",
+  "manifestVersion": "1.30",
+  "id": "031c27ca-b239-4e06-9554-fc883eb11805",
+  "name": {
+    "short": "refresh-schedule app"
+  },
+  "developer": {
+    "name": "Analyticsaura",
+    "websiteUrl": "https://analyticsaura.com/",
+    "privacyUrl": "https://drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net/privacy",
+    "termsOfUseUrl": "https://drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net/terms"
+  },
+  "description": {
+    "short": "Manage Power BI dataset refresh schedules and view refresh history.",
+    "full": "Refresh Schedule helps Power BI users view dataset refresh schedules, monitor refresh history, and trigger on-demand refreshes from Microsoft Teams."
+  },
+  "icons": {
+    "outline": "outline.png",
+    "color": "color.png"
+  },
+  "accentColor": "#9596cf",
+  "staticTabs": [
+    {
+      "entityId": "eb3984b1-9d03-4c2c-8548-0b5cf3454bd9",
+      "name": "Refresh schedule",
+      "contentUrl": "https://drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net/",
+      "websiteUrl": "https://drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net/",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
+  "validDomains": [
+    "drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net"
+  ],
+  "webApplicationInfo": {
+    "id": "49d248fc-9993-4d7d-a36d-2d64403b4340",
+    "resource": "api://drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net/49d248fc-9993-4d7d-a36d-2d64403b4340"
+  }
+}
