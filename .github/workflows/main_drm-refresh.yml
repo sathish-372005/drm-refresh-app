@@ -25,11 +25,15 @@ jobs:
 
       - name: Prepare standalone package
         run: |
-          mkdir deploy
-          cp -r .next/standalone/. deploy/
-          mkdir -p deploy/.next
-          cp -r .next/static deploy/.next/static
-          if [ -d public ]; then cp -r public deploy/public; fi
+         mkdir -p deploy
+          cp -r dist/standalone/* deploy/
+          cp -r dist/static deploy/dist/static
+          cp -r public deploy/
+          cp -r prisma deploy/ || true
+          cp -r .env.production deploy/
+          cd deploy
+          zip -r ../app.zip .
+          cd ..
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -37,5 +41,5 @@ jobs:
         with:
           app-name: 'drm-refresh'
           slot-name: 'Production'
-          package: deploy
+          package: app.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DE2B9BAA483D47C089323DF4E73F7696 }}
