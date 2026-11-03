@@ -26,13 +26,14 @@ jobs:
 
       - name: Prepare standalone package
         run: |
-          mkdir deploy
-          cp -r dist/standalone/. deploy/
-          mkdir -p deploy/dist
+          mkdir -p deploy
+          cp -r dist/standalone/* deploy/
           cp -r dist/static deploy/dist/static
-          if [ -d public ]; then cp -r public deploy/public; fi
+          cp -r public deploy/
+          cp -r .env.production deploy/
           cd deploy
-          zip -qr ../app.zip .
+          zip -r ../app.zip .
+          cd ..
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
