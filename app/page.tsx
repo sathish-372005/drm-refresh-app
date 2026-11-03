@@ -2,7 +2,7 @@ import Sample from "./src/ui/Sample";
 
 export const ChildrenPage = () => {
   return (
-    <div> Home2222234444
+    <div> Home222223444455
       <Sample />
     </div>)
 }
