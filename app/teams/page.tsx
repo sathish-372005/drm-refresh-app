@@ -1,16 +1,15 @@
 "use client";
 
-import { app, authentication } from "@microsoft/teams-js";
 import { useEffect, useState } from "react";
 import DatasetsListView from "@/components/dataset/DatasetsListView";
+import { getAppToken, initializeTeams } from "@/app/lib/auth-client";
 
 export default function TeamsPage() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    app
-      .initialize()
+    initializeTeams()
       .then(() => setReady(true))
       .catch(() => setError("Open this page inside Microsoft Teams."));
   }, []);
@@ -35,7 +34,7 @@ export default function TeamsPage() {
 
   return (
     <main className="mx-auto w-full max-w-md p-4 pt-6 pb-20 min-h-screen bg-[#f8fafc]">
-      <DatasetsListView getToken={() => authentication.getAuthToken()} />
+      <DatasetsListView getToken={getAppToken} />
     </main>
   );
 }

@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { getWebToken } from "@/app/lib/auth-client";
+import { getAppToken } from "@/app/lib/auth-client";
 import DatasetDetailView from "@/components/dataset/DatasetDetailView";
 
 function DatasetDetailContent() {
@@ -20,7 +20,7 @@ function DatasetDetailContent() {
       datasetName={datasetName}
       workspaceId={workspaceId}
       workspaceName={workspaceName}
-      getToken={getWebToken}
+      getToken={getAppToken}
     />
   );
 }

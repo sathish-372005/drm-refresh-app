@@ -4,6 +4,7 @@ import {
   InteractionRequiredAuthError,
   PublicClientApplication,
 } from "@azure/msal-browser";
+import { app as teamsApp, authentication } from "@microsoft/teams-js";
 
 const clientId =
   process.env.NEXT_PUBLIC_ENTRA_CLIENT_ID ||
@@ -23,6 +24,17 @@ const powerBiScopes = [
 ];
 
 let clientPromise: Promise<PublicClientApplication> | null = null;
+let teamsInitialization: Promise<void> | null = null;
+
+export function initializeTeams() {
+  if (!teamsInitialization) {
+    teamsInitialization = teamsApp.initialize().catch((error: unknown) => {
+      teamsInitialization = null;
+      throw error;
+    });
+  }
+  return teamsInitialization;
+}
 
 function msal() {
   if (!clientPromise) {
@@ -92,6 +104,15 @@ export async function getWebToken(): Promise<string | null> {
     }
     throw error;
   }
+}
+
+/** Uses Teams SSO when embedded in Teams and browser MSAL otherwise. */
+export async function getAppToken(): Promise<string | null> {
+  if (typeof window !== "undefined" && window.parent !== window) {
+    await initializeTeams();
+    return authentication.getAuthToken();
+  }
+  return getWebToken();
 }
 
 export async function signOut() {

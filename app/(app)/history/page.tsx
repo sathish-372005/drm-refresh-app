@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getWebToken } from "@/app/lib/auth-client";
+import { getAppToken } from "@/app/lib/auth-client";
 import { Activity, Clock } from "lucide-react";
 import { formatRelativeTime } from "@/components/dataset/format-utils";
 import StatusBadge from "@/components/dataset/StatusBadge";
@@ -26,7 +26,7 @@ export default function HistoryPage() {
     async function loadActivity() {
       try {
         setLoading(true);
-        const token = await getWebToken();
+        const token = await getAppToken();
         if (!token) return;
 
         const res = await fetch("/api/powerbi/datasets", {
