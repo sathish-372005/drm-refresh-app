@@ -1,9 +1,11 @@
-import Sample from "./src/ui/Sample";
+import TeamsPage from "./teams/page";
+
 
 export const ChildrenPage = () => {
   return (
-    <div> Home222223444455
-      <Sample />
-    </div>)
+    <div> 
+      <TeamsPage />
+    </div>
+    )
 }
 export default ChildrenPage;

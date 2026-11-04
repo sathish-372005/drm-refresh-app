@@ -14,8 +14,10 @@
     "@microsoft/teams-js": "^2.58.0",
     "jose": "^6.2.15",
     "next": "16.4.3",
+    "next-auth": "^4.24.15",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
