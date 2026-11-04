@@ -25,7 +25,7 @@
     {
       "entityId": "eb3984b1-9d03-4c2c-8548-0b5cf3454bd9",
       "name": "Refresh schedule",
-      "contentUrl": "https://drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net/",
+      "contentUrl": "https://drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net/teams",
       "websiteUrl": "https://drm-refresh-e6aph2hkemceegb4.westus3-01.azurewebsites.net/",
       "scopes": [
         "personal"
