@@ -106,11 +106,28 @@ export async function getWebToken(): Promise<string | null> {
   }
 }
 
+let inTeams: Promise<boolean> | null = null;
+
+function detectTeams() {
+  if (!inTeams) {
+    inTeams = Promise.race([
+      initializeTeams().then(() => true),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000)),
+    ]).catch(() => false);
+  }
+  return inTeams;
+}
+
 /** Uses Teams SSO when embedded in Teams and browser MSAL otherwise. */
 export async function getAppToken(): Promise<string | null> {
-  if (typeof window !== "undefined" && window.parent !== window) {
-    await initializeTeams();
-    return authentication.getAuthToken();
+  if (typeof window === "undefined") return null;
+  if (await detectTeams()) {
+    try {
+      return await authentication.getAuthToken();
+    } catch (e) {
+      console.error("Teams SSO failed", e);
+      return null;
+    }
   }
   return getWebToken();
 }
