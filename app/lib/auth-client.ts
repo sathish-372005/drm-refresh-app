@@ -4,8 +4,16 @@ import {
   InteractionRequiredAuthError,
   PublicClientApplication,
 } from "@azure/msal-browser";
+const clientId =
+  process.env.NEXT_PUBLIC_ENTRA_CLIENT_ID ||
+  process.env.NEXT_PUBLIC_AZURE_CLIENT_ID ||
+  "";
 
-const apiScope = process.env.NEXT_PUBLIC_API_SCOPE!;
+const apiScope =
+  process.env.NEXT_PUBLIC_API_SCOPE ||
+  (process.env.NEXT_PUBLIC_APP_ID_URI
+    ? `${process.env.NEXT_PUBLIC_APP_ID_URI}/access_as_user`
+    : "");
 
 // Shown on the consent screen so the user approves everything once.
 const powerBiScopes = [
