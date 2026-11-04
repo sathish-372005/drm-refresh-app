@@ -11,6 +11,11 @@ export default function Home() {
   const [user, setUser] = useState<{ name: string | null; username: string } | null>(null);
 
   useEffect(() => {
+    if (window.parent !== window) {
+      router.replace("/teams");
+      return;
+    }
+
     getUser().then((u) => (u ? setUser(u) : router.replace("/login")));
   }, [router]);
 

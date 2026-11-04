@@ -10,6 +10,11 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (window.parent !== window) {
+      router.replace("/teams");
+      return;
+    }
+
     getUser().then((user) => user && router.replace("/"));
   }, [router]);
 
@@ -24,7 +29,6 @@ export default function LoginPage() {
       setBusy(false);
     }
   }
-
   return (
     <main style={{ maxWidth: 400, margin: "20vh auto", padding: 24, fontFamily: "sans-serif", textAlign: "center" }}>
       <h1>Power BI Refresh</h1>
