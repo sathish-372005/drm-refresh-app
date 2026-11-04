@@ -23,7 +23,7 @@ export default function Workspaces({ getToken, onUnauthenticated, onConsent }: P
       const token = await getToken();
       if (!token) return onUnauthenticated?.();
 
-      const res = await fetch("/api/powerbi/workspaces", {
+      const res = await fetch("/api/powerbi/workspace", {
         headers: { Authorization: `Bearer ${token}` },
         cache: "no-store",
       });

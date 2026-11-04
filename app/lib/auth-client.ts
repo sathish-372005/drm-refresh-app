@@ -4,6 +4,7 @@ import {
   InteractionRequiredAuthError,
   PublicClientApplication,
 } from "@azure/msal-browser";
+
 const clientId =
   process.env.NEXT_PUBLIC_ENTRA_CLIENT_ID ||
   process.env.NEXT_PUBLIC_AZURE_CLIENT_ID ||
@@ -21,36 +22,54 @@ const powerBiScopes = [
   "https://analysis.windows.net/powerbi/api/Dataset.ReadWrite.All",
 ];
 
-let instance: PublicClientApplication | null = null;
+let clientPromise: Promise<PublicClientApplication> | null = null;
 
-async function msal() {
-  if (!instance) {
-    instance = new PublicClientApplication({
-      auth: {
-        clientId: process.env.NEXT_PUBLIC_ENTRA_CLIENT_ID!,
-        authority: "https://login.microsoftonline.com/organizations",
-        redirectUri: `${window.location.origin}/blank`,
-        postLogoutRedirectUri: `${window.location.origin}/login`,
-      },
-      cache: { cacheLocation: "sessionStorage" },
-    });
-    await instance.initialize();
+function msal() {
+  if (!clientPromise) {
+    clientPromise = (async () => {
+      if (!clientId || !apiScope) {
+        throw new Error("Missing NEXT_PUBLIC client id or API scope. Check .env and restart.");
+      }
+      const client = new PublicClientApplication({
+        auth: {
+          clientId,
+          authority: "https://login.microsoftonline.com/organizations",
+          redirectUri: `${window.location.origin}/login`,
+          postLogoutRedirectUri: `${window.location.origin}/login`,
+        },
+        cache: { cacheLocation: "sessionStorage" },
+      });
+      await client.initialize();
+
+       try {
+        const result = await client.handleRedirectPromise();
+        if (result?.account) client.setActiveAccount(result.account);
+      } catch (err) {
+        // Don't replay a stale failed exchange on every page load.
+        window.history.replaceState({}, "", window.location.pathname);
+        sessionStorage.clear();
+        throw err;
+      }
+      return client;
+    })();
+    // Allow a retry if setup failed.
+    clientPromise.catch(() => (clientPromise = null));
   }
-  return instance;
+  return clientPromise;
 }
 
 function activeAccount(client: PublicClientApplication) {
   return client.getActiveAccount() ?? client.getAllAccounts()[0] ?? null;
 }
 
+/** Leaves the page for Microsoft, then returns to /login. */
 export async function signIn(consent = false) {
   const client = await msal();
-  const result = await client.loginPopup({
+  await client.loginRedirect({
     scopes: [apiScope],
     extraScopesToConsent: powerBiScopes,
     prompt: consent ? "consent" : "select_account",
   });
-  client.setActiveAccount(result.account);
 }
 
 export async function getUser() {
@@ -68,7 +87,8 @@ export async function getWebToken(): Promise<string | null> {
     return (await client.acquireTokenSilent({ scopes: [apiScope], account })).accessToken;
   } catch (error) {
     if (error instanceof InteractionRequiredAuthError) {
-      return (await client.acquireTokenPopup({ scopes: [apiScope], account })).accessToken;
+      await client.acquireTokenRedirect({ scopes: [apiScope], account });
+      return null;
     }
     throw error;
   }
