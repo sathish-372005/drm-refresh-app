@@ -1,36 +1,35 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { FC } from "react";
-import BottomNav from "./src/components/navbar";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import BottomNav from "../components/custom/navbar";
 
 export const metadata: Metadata = {
   title: "Refresh Schedule",
   description: "View Power BI dataset refresh schedules and history in Microsoft Teams.",
 };
 
-export const HomeLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="flex min-h-full flex-col pb-24">
+    <html lang="en" className="h-full antialiased font-sans">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="flex min-h-full flex-col pb-20 font-sans antialiased bg-[#f8fafc] text-slate-900">
         {children}
         <BottomNav />
       </body>
     </html>
   );
 }
-
-export default HomeLayout;

@@ -2,37 +2,40 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-import { getUser, getWebToken, signIn, signOut } from "@/app/lib/auth-client";
-import Workspaces from "./src/components/workspace";
+import { getUser, getWebToken } from "@/app/lib/auth-client";
+import DatasetsListView from "@/components/dataset/DatasetsListView";
 
 export default function Home() {
   const router = useRouter();
-  const [user, setUser] = useState<{ name: string | null; username: string } | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (window.parent !== window) {
+    // If inside Teams iframe, redirect to /teams
+    if (typeof window !== "undefined" && window.parent !== window) {
       router.replace("/teams");
       return;
     }
 
-    getUser().then((u) => (u ? setUser(u) : router.replace("/login")));
+    getUser().then((user) => {
+      if (!user) {
+        router.replace("/login");
+      } else {
+        setLoading(false);
+      }
+    });
   }, [router]);
 
-  if (!user) return <p style={{ padding: 24 }}>Loading…</p>;
+  if (loading) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-md items-center justify-center p-6 bg-[#f8fafc]">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#F2C811] border-t-transparent" />
+      </main>
+    );
+  }
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "sans-serif" }}>
-      <h1>Power BI Refresh</h1>
-      <p>
-        Signed in as <strong>{user.name ?? user.username}</strong>{" "}
-        <button type="button" onClick={() => signOut()}>Sign out</button>
-      </p>
-      {/* <Workspaces
-        getToken={getWebToken}
-        onUnauthenticated={() => router.replace("/login")}
-        onConsent={() => signIn(true)}
-      /> */}
+    <main className="mx-auto w-full max-w-md p-4 pt-6 pb-20 min-h-screen bg-[#f8fafc]">
+      <DatasetsListView getToken={getWebToken} />
     </main>
   );
 }

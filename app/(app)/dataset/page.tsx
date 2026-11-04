@@ -1,11 +1,10 @@
-import React from 'react'
+import { getWebToken } from "@/app/lib/auth-client";
+import DatasetsListView from "@/components/dataset/DatasetsListView";
 
-const Datasets = () => {
+export default function DatasetsPage() {
   return (
-    <div>
-      datasett
-    </div>
-  )
+    <main className="mx-auto w-full max-w-md p-4 pt-6 pb-20 min-h-screen bg-[#f8fafc]">
+      <DatasetsListView getToken={getWebToken} />
+    </main>
+  );
 }
-
-export default Datasets

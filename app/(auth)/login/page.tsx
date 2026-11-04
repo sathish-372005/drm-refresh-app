@@ -29,13 +29,25 @@ export default function LoginPage() {
       setBusy(false);
     }
   }
+
   return (
-    <main style={{ maxWidth: 400, margin: "20vh auto", padding: 24, fontFamily: "sans-serif", textAlign: "center" }}>
-      <h1>Power BI Refresh</h1>
-      <button type="button" onClick={handleSignIn} disabled={busy}>
-        {busy ? "Signing in…" : "Sign in with Microsoft"}
-      </button>
-      {error && <p role="alert" style={{ color: "#b91c1c" }}>{error}</p>}
+    <main className="mx-auto my-[20vh] w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+      <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-[#F2C811] shadow-sm shadow-[#F2C811]/30">
+        <span className="font-extrabold text-[#18181B] text-xl">P</span>
+      </div>
+      <h1 className="text-xl font-bold tracking-tight text-slate-900">Power BI Refresh</h1>
+      <p className="mt-1 text-xs text-slate-500">Sign in with your organization account</p>
+      <div className="mt-6">
+        <button
+          type="button"
+          onClick={handleSignIn}
+          disabled={busy}
+          className="w-full rounded-xl bg-[#F2C811] hover:bg-[#E5B800] py-2.5 px-4 text-sm font-bold text-[#18181B] shadow-sm shadow-[#F2C811]/30 active:scale-[0.98] transition disabled:opacity-60"
+        >
+          {busy ? "Signing in…" : "Sign in with Microsoft"}
+        </button>
+      </div>
+      {error && <p role="alert" className="mt-3 text-xs text-rose-600">{error}</p>}
     </main>
   );
 }

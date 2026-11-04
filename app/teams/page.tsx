@@ -2,8 +2,7 @@
 
 import { app, authentication } from "@microsoft/teams-js";
 import { useEffect, useState } from "react";
-import Workspaces from "../src/components/workspace";
-
+import DatasetsListView from "@/components/dataset/DatasetsListView";
 
 export default function TeamsPage() {
   const [ready, setReady] = useState(false);
@@ -16,13 +15,27 @@ export default function TeamsPage() {
       .catch(() => setError("Open this page inside Microsoft Teams."));
   }, []);
 
-  if (error) return <p role="alert" style={{ padding: 24 }}>{error}</p>;
-  if (!ready) return <p style={{ padding: 24 }}>Connecting to Teams…</p>;
+  if (error) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-md items-center justify-center p-6 bg-[#f8fafc]">
+        <p role="alert" className="text-center text-sm font-medium text-rose-600">
+          {error}
+        </p>
+      </main>
+    );
+  }
+
+  if (!ready) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-md items-center justify-center p-6 bg-[#f8fafc]">
+        <p className="text-center text-sm text-slate-500">Connecting to Teams…</p>
+      </main>
+    );
+  }
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "sans-serif" }}>
-      <h1>Power BI Refresh</h1>
-      <Workspaces getToken={() => authentication.getAuthToken()} />
+    <main className="mx-auto w-full max-w-md p-4 pt-6 pb-20 min-h-screen bg-[#f8fafc]">
+      <DatasetsListView getToken={() => authentication.getAuthToken()} />
     </main>
   );
 }
