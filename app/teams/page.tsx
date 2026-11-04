@@ -23,7 +23,17 @@ export default function TeamsPage() {
     <main style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "sans-serif" }}>
       <h1>Power BI Refresh</h1>
       {/* Teams caches tokens and refreshes them, so call this per request. */}
-      <Workspaces getToken={() => authentication.getAuthToken()} />
+      <Workspaces
+        getToken={() => authentication.getAuthToken()}
+        onConsent={async () => {
+          await authentication.authenticate({
+            url: `${window.location.origin}/teams/auth-start`,
+            width: 600,
+            height: 535,
+          });
+        }}
+        autoConsent
+      />
     </main>
   );
 }
