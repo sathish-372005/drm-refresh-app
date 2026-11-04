@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Workspace = { id: string; name: string };
 
@@ -9,19 +9,12 @@ type Props = {
   onUnauthenticated?: () => void;
   /** Web only: reopens Microsoft sign-in with the consent screen. */
   onConsent?: () => Promise<void>;
-  autoConsent?: boolean;
 };
 
-export default function Workspaces({
-  getToken,
-  onUnauthenticated,
-  onConsent,
-  autoConsent = false,
-}: Props) {
+export default function Workspaces({ getToken, onUnauthenticated, onConsent }: Props) {
   const [workspaces, setWorkspaces] = useState<Workspace[] | null>(null);
   const [needConsent, setNeedConsent] = useState(false);
   const [error, setError] = useState("");
-  const consentAttempted = useRef(false);
 
   async function load() {
     setError("");
@@ -50,13 +43,6 @@ export default function Workspaces({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (!autoConsent || !needConsent || !onConsent || consentAttempted.current) return;
-    consentAttempted.current = true;
-    void grant();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoConsent, needConsent, onConsent]);
-
   async function grant() {
     try {
       await onConsent?.();
@@ -67,8 +53,6 @@ export default function Workspaces({
   }
 
   if (needConsent) {
-    if (autoConsent) return <p>Connecting to Microsoft…</p>;
-
     return onConsent ? (
       <>
         <p>Approve access to Power BI (one time).</p>
