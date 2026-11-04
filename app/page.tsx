@@ -28,11 +28,11 @@ export default function Home() {
         Signed in as <strong>{user.name ?? user.username}</strong>{" "}
         <button type="button" onClick={() => signOut()}>Sign out</button>
       </p>
-      <Workspaces
+      {/* <Workspaces
         getToken={getWebToken}
         onUnauthenticated={() => router.replace("/login")}
         onConsent={() => signIn(true)}
-      />
+      /> */}
     </main>
   );
 }
