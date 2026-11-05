@@ -26,13 +26,6 @@ const NAV_ITEMS = [
     isActive: (pathname: string) =>
       pathname === "/alerts" || pathname.startsWith("/alerts/"),
   },
-  {
-    href: "/account",
-    label: "Account",
-    icon: User,
-    isActive: (pathname: string) =>
-      pathname === "/account" || pathname.startsWith("/account/"),
-  },
 ];
 
 export default function BottomNav() {
