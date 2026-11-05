@@ -133,7 +133,7 @@ export default function DatasetDetailView({
       <div>
         <Link
           href="/dataset"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-slate-700 hover:text-[#B45309] transition"
+          className="inline-flex items-center gap-1 text-sm font-semibold text-muted-foreground transition hover:text-primary"
         >
           <ChevronLeft className="size-4 stroke-[2.5]" />
           <span>Datasets</span>
@@ -142,27 +142,27 @@ export default function DatasetDetailView({
 
       {/* Dataset Title */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
           {datasetName}
         </h1>
 
         {/* 3-Column Metadata */}
-        <div className="mt-3 grid grid-cols-3 gap-2 border-b border-slate-100 pb-4 text-left">
+        <div className="mt-3 grid grid-cols-3 gap-2 border-b border-border pb-4 text-left">
           <div>
-            <p className="text-sm font-semibold text-slate-800 truncate">
+            <p className="truncate text-sm font-semibold text-foreground">
               {workspaceName}
             </p>
-            <p className="text-xs text-slate-400">workspace</p>
+            <p className="text-xs text-muted-foreground">workspace</p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-800">
+            <p className="text-sm font-semibold text-foreground">
               {storageMode}
             </p>
-            <p className="text-xs text-slate-400">mode</p>
+            <p className="text-xs text-muted-foreground">mode</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Owner:</p>
-            <p className="text-xs font-medium text-slate-700 truncate" title={owner}>
+            <p className="text-xs text-muted-foreground">Owner:</p>
+            <p className="truncate text-xs font-medium text-foreground" title={owner}>
               {owner}
             </p>
           </div>
@@ -171,7 +171,7 @@ export default function DatasetDetailView({
 
       {/* Top Failure Alert Card with Accordion */}
       {isLatestFailed && (
-        <div className="rounded-2xl border border-rose-200 bg-[#fff1f2] p-4 text-left space-y-2.5 overflow-hidden">
+        <div className="space-y-2.5 overflow-hidden rounded-2xl border border-rose-200 bg-rose-50 p-4 text-left dark:border-rose-900 dark:bg-rose-950/40">
           <div className="flex items-center gap-2 text-sm font-bold text-[#be123c]">
             <AlertTriangle className="size-4 shrink-0 stroke-[2.5]" />
             <span>Last refresh failed · {failedTimeAgo}</span>
@@ -182,12 +182,12 @@ export default function DatasetDetailView({
 
       {/* Action Notifications */}
       {actionSuccess && (
-        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-xs font-semibold text-emerald-800">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200">
           {actionSuccess}
         </div>
       )}
       {actionError && (
-        <div className="rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs font-semibold text-rose-800">
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-semibold text-rose-800 dark:border-rose-900 dark:bg-rose-950/50 dark:text-rose-200">
           {actionError}
         </div>
       )}
@@ -216,33 +216,33 @@ export default function DatasetDetailView({
           }
           target="_blank"
           rel="noreferrer"
-          className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white py-2.5 px-4 text-sm font-semibold text-slate-800 shadow-sm hover:border-[#F2C811] hover:bg-[#FEF9C3]/40 active:scale-[0.98] transition"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-card-foreground shadow-sm transition hover:border-primary hover:bg-muted active:scale-[0.98]"
         >
-          <Clock className="size-4 text-slate-500" />
+          <Clock className="size-4 text-muted-foreground" />
           <span>Edit schedule</span>
         </a>
       </div>
 
       {/* Schedule Summary Text */}
-      <p className="text-xs text-slate-500 text-left">
+      <p className="text-left text-xs text-muted-foreground">
         {formatScheduleSummary(schedule)}
       </p>
 
       {/* Refresh History Section */}
       <div className="pt-2 space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-slate-900">Refresh history</h2>
-          <span className="text-xs text-slate-400 font-medium">Most recent runs</span>
+          <h2 className="text-base font-bold text-foreground">Refresh history</h2>
+          <span className="text-xs font-medium text-muted-foreground">Most recent runs</span>
         </div>
 
         {loading ? (
           <div className="space-y-2 py-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 w-full animate-pulse rounded-2xl bg-slate-100" />
+              <div key={i} className="h-16 w-full animate-pulse rounded-2xl bg-muted" />
             ))}
           </div>
         ) : fetchError ? (
-          <div className="rounded-xl border border-rose-100 bg-rose-50/50 p-4 text-center">
+          <div className="rounded-xl border border-rose-100 bg-rose-50/50 p-4 text-center dark:border-rose-900 dark:bg-rose-950/40">
             <p className="text-xs font-medium text-rose-700">{fetchError}</p>
             <button
               type="button"
@@ -253,7 +253,7 @@ export default function DatasetDetailView({
             </button>
           </div>
         ) : refreshes.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500">
+          <div className="rounded-2xl border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
             No refresh history recorded yet for this dataset.
           </div>
         ) : (

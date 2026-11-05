@@ -27,8 +27,8 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="flex min-h-full flex-col pb-20 font-sans antialiased bg-background text-foreground transition-colors duration-150">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body className="flex min-h-full flex-col bg-background font-sans text-foreground antialiased transition-colors duration-150">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
           <BottomNav />
         </ThemeProvider>

@@ -31,12 +31,12 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto my-[20vh] w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+    <main className="mx-auto my-[20vh] w-full max-w-sm rounded-2xl border border-border bg-card p-6 text-center text-card-foreground shadow-sm">
       <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-[#F2C811] shadow-sm shadow-[#F2C811]/30">
         <span className="font-extrabold text-[#18181B] text-xl">P</span>
       </div>
-      <h1 className="text-xl font-bold tracking-tight text-slate-900">Power BI Refresh</h1>
-      <p className="mt-1 text-xs text-slate-500">Sign in with your organization account</p>
+      <h1 className="text-xl font-bold tracking-tight text-card-foreground">Power BI Refresh</h1>
+      <p className="mt-1 text-xs text-muted-foreground">Sign in with your organization account</p>
       <div className="mt-6">
         <button
           type="button"

@@ -18,19 +18,19 @@ export default function RefreshHistoryRow({ run }: Props) {
     run.status?.toLowerCase() === "disabled";
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-3.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)] space-y-2 overflow-hidden">
+    <div className="space-y-2 overflow-hidden rounded-2xl border border-border bg-card p-3.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-semibold text-slate-800">
+        <span className="text-sm font-semibold text-card-foreground">
           {dateFormatted}
         </span>
-        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-600">
+        <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
           {triggerLabel}
         </span>
       </div>
 
       <div className="flex items-center justify-between gap-2">
         <StatusBadge status={run.status} size="sm" />
-        <span className="text-xs text-slate-500 font-medium">
+        <span className="text-xs font-medium text-muted-foreground">
           {run.durationText || "—"}
         </span>
       </div>

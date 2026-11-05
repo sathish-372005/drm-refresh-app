@@ -16,7 +16,7 @@ export default function TeamsPage() {
 
   if (error) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-md items-center justify-center p-6 bg-[#f8fafc]">
+      <main className="mx-auto flex min-h-screen max-w-md items-center justify-center bg-background p-6 text-foreground">
         <p role="alert" className="text-center text-sm font-medium text-rose-600">
           {error}
         </p>
@@ -26,14 +26,14 @@ export default function TeamsPage() {
 
   if (!ready) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-md items-center justify-center p-6 bg-[#f8fafc]">
-        <p className="text-center text-sm text-slate-500">Connecting to Teams…</p>
+      <main className="mx-auto flex min-h-screen max-w-md items-center justify-center bg-background p-6 text-foreground">
+        <p className="text-center text-sm text-muted-foreground">Connecting to Teams…</p>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-md p-4 pt-6 pb-20 min-h-screen bg-[#f8fafc]">
+    <main className="mx-auto min-h-screen w-full max-w-md bg-background p-4 pb-20 pt-6 text-foreground">
       <DatasetsListView getToken={getAppToken} />
     </main>
   );

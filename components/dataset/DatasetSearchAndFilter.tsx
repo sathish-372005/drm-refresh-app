@@ -22,13 +22,13 @@ export default function DatasetSearchAndFilter({
     <div className="space-y-3.5">
       {/* Search Input */}
       <div className="relative flex items-center">
-        <Search className="absolute left-3.5 size-4 text-slate-400 pointer-events-none" />
+        <Search className="pointer-events-none absolute left-3.5 size-4 text-muted-foreground" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search datasets or workspaces"
-          className="w-full rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#F2C811] focus:outline-none focus:ring-2 focus:ring-[#F2C811]/30 shadow-sm transition"
+          className="w-full rounded-2xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-card-foreground placeholder:text-muted-foreground shadow-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
       </div>
 
@@ -44,7 +44,7 @@ export default function DatasetSearchAndFilter({
               className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all shadow-sm ${
                 isActive
                   ? "bg-[#F2C811] text-[#18181B] font-bold shadow-sm shadow-[#F2C811]/30 border border-[#E5B800]"
-                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  : "border border-border bg-card text-muted-foreground hover:bg-muted"
               }`}
             >
               {filter}

@@ -112,11 +112,10 @@ export default function DatasetsListView({ getToken }: Props) {
   const refreshableCount = allDatasets.filter((d) => d.isRefreshable !== false).length;
 
   return (
-    <div>
+    <div className="flex flex-1 flex-col">
       {/* ───────── Yellow hero ───────── */}
-      {/* -mx-4 -mt-4 cancels the page padding so the yellow touches the edges.
-          Change to match your page wrapper's padding. */}
-      <section className="-mx-4 -mt-4 bg-[#F2C811] px-5 pb-14 pt-5 text-[#1F1E1D]">
+      {/* -mx-4 cancels the page's horizontal padding so the yellow touches the edges. */}
+      <section className="-mx-4 bg-[#F2C811] px-5 pb-14 pt-5 text-[#1F1E1D]">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Datasets</h1>
@@ -140,19 +139,19 @@ export default function DatasetsListView({ getToken }: Props) {
         {/* Search bar inside the yellow area */}
         <label className="relative mt-5 block">
           <span className="sr-only">Search datasets or workspaces</span>
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" />
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search datasets or workspaces"
-            className="h-12 w-full rounded-full border-0 bg-white pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-500 shadow-sm outline-none focus:ring-2 focus:ring-[#1F1E1D]"
+            className="h-12 w-full rounded-full border-0 bg-card pl-11 pr-4 text-sm text-card-foreground placeholder:text-muted-foreground shadow-sm outline-none focus:ring-2 focus:ring-primary"
           />
         </label>
       </section>
 
       {/* ───────── White sheet ───────── */}
-      <section className="relative -mx-4 -mt-8 space-y-4 rounded-t-[28px] bg-white px-4 pb-6 pt-5">
+      <section className="relative -mx-4 -mt-8 flex-1 space-y-4 rounded-t-[28px] bg-background px-4 pb-6 pt-5">
         {/* Filter chips */}
         {/* Filter Pills with Power BI Yellow active state */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
@@ -165,7 +164,7 @@ export default function DatasetsListView({ getToken }: Props) {
                 onClick={() => setActiveFilter(filter)}
                 className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all shadow-sm ${isActive
                     ? "bg-[#F2C811] text-[#18181B] font-bold shadow-sm shadow-[#F2C811]/30 border border-[#E5B800]"
-                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                    : "border border-border bg-card text-muted-foreground hover:bg-muted"
                   }`}
               >
                 {filter}
@@ -189,7 +188,7 @@ export default function DatasetsListView({ getToken }: Props) {
           {loading && !data ? (
             <div className="space-y-3 py-2">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-24 w-full animate-pulse rounded-2xl border border-slate-100 bg-white shadow-sm" />
+                <div key={i} className="h-24 w-full animate-pulse rounded-2xl border border-border bg-card shadow-sm" />
               ))}
             </div>
           ) : error ? (
@@ -204,10 +203,10 @@ export default function DatasetsListView({ getToken }: Props) {
               </button>
             </div>
           ) : filteredDatasets.length === 0 ? (
-            <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-white/50 p-10 text-center">
-              <Database className="mx-auto size-8 text-slate-300" />
-              <p className="text-sm font-medium text-slate-700">No datasets found</p>
-              <p className="text-xs text-slate-400">
+            <div className="space-y-2 rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
+              <Database className="mx-auto size-8 text-muted-foreground" />
+              <p className="text-sm font-medium text-foreground">No datasets found</p>
+              <p className="text-xs text-muted-foreground">
                 {searchQuery
                   ? `No datasets matched "${searchQuery}".`
                   : "No datasets are configured for this view."}

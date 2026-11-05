@@ -46,7 +46,7 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Primary navigation"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200/90 bg-white/95 shadow-[0_-2px_12px_rgba(0,0,0,0.03)] backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-border bg-background shadow-[0_-4px_16px_rgba(0,0,0,0.06)]"
     >
       <div className="mx-auto flex h-[4.5rem] max-w-lg items-center justify-around px-2">
         {NAV_ITEMS.map(({ href, label, icon: Icon, isActive }) => {
@@ -57,15 +57,27 @@ export default function BottomNav() {
               key={href}
               href={href}
               aria-current={active ? "page" : undefined}
-              className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1 py-1 text-slate-500 transition-colors duration-150 hover:text-slate-800 active:scale-95"
+              className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 py-1 transition-colors duration-150 active:scale-95"
             >
-              <Icon
-                className={`size-6 ${active ? "text-primary" : ""}`}
-                strokeWidth={active ? 2.4 : 1.8}
-              />
+              {/* Fixed-size slot so labels stay on one line for every tab */}
+              <span className="relative block size-7">
+                {active ? (
+                  <span className="absolute -top-4 left-1/2 flex size-11 -translate-x-1/2 items-center justify-center rounded-full bg-[#F2C811] text-[#18181B] shadow-md shadow-[#F2C811]/40 ring-[3px] ring-background">
+  <Icon className="size-5" strokeWidth={2.4} />
+</span>
+                ) : (
+                  <Icon
+                    className="size-7 text-muted-foreground"
+                    strokeWidth={1.8}
+                  />
+                )}
+              </span>
+
               <span
                 className={`text-[11px] tracking-tight ${
-                  active ? "font-semibold text-slate-900" : "font-medium"
+                  active
+                    ? "font-semibold text-[#A16207] dark:text-[#F2C811]"
+                    : "font-medium text-muted-foreground"
                 }`}
               >
                 {label}

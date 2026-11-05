@@ -27,8 +27,8 @@ function DatasetDetailContent() {
 
 export default function DatasetDetailPage() {
   return (
-    <main className="mx-auto w-full max-w-md p-4 pt-6 pb-20 min-h-screen bg-[#f8fafc]">
-      <Suspense fallback={<div className="h-48 w-full animate-pulse rounded-2xl bg-white" />}>
+    <main className="mx-auto min-h-screen w-full max-w-md bg-background p-4 pb-20 pt-6 text-foreground">
+      <Suspense fallback={<div className="h-48 w-full animate-pulse rounded-2xl bg-muted" />}>
         <DatasetDetailContent />
       </Suspense>
     </main>
