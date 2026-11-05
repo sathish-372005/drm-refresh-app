@@ -10,7 +10,10 @@ const NAV_ITEMS = [
     label: "Datasets",
     icon: Database,
     isActive: (pathname: string) =>
-      pathname === "/" || pathname === "/dataset" || pathname.startsWith("/dataset/"),
+      pathname === "/" ||
+      pathname === "/teams" ||
+      pathname === "/dataset" ||
+      pathname.startsWith("/dataset/"),
   },
   {
     href: "/history",
@@ -26,6 +29,14 @@ const NAV_ITEMS = [
     isActive: (pathname: string) =>
       pathname === "/alerts" || pathname.startsWith("/alerts/"),
   },
+  {
+    href: "/admin-test",
+    label: "admin",
+    icon: Bell,
+    isActive: (pathname: string) =>
+      pathname === "/admin-test" || pathname.startsWith("/admin-test/"),
+  },
+  
 ];
 
 export default function BottomNav() {
