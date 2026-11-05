@@ -89,6 +89,50 @@ export async function getUser() {
   return account ? { name: account.name ?? null, username: account.username } : null;
 }
 
+let inTeams: Promise<boolean> | null = null;
+
+export function detectTeams() {
+  if (!inTeams) {
+    inTeams = Promise.race([
+      initializeTeams().then(() => true),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 2000)),
+    ]).catch(() => false);
+  }
+  return inTeams;
+}
+
+/** Returns the signed-in user's name and email in both Web and Microsoft Teams. */
+export async function getAppUser(): Promise<{ name: string | null; email: string | null } | null> {
+  if (typeof window === "undefined") return null;
+
+  // 1. In Teams, fetch context directly
+  try {
+    if (await detectTeams()) {
+      const context = await teamsApp.getContext();
+      if (context?.user) {
+        return {
+          name: context.user.displayName || null,
+          email: context.user.userPrincipalName || null,
+        };
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. In browser, fetch MSAL account
+  try {
+    const u = await getUser();
+    if (u) {
+      return { name: u.name, email: u.username };
+    }
+  } catch {
+    // ignore
+  }
+
+  return null;
+}
+
 /** Returns a valid API token, refreshing silently. Null means "go to login". */
 export async function getWebToken(): Promise<string | null> {
   const client = await msal();
@@ -104,18 +148,6 @@ export async function getWebToken(): Promise<string | null> {
     }
     throw error;
   }
-}
-
-let inTeams: Promise<boolean> | null = null;
-
-function detectTeams() {
-  if (!inTeams) {
-    inTeams = Promise.race([
-      initializeTeams().then(() => true),
-      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000)),
-    ]).catch(() => false);
-  }
-  return inTeams;
 }
 
 /** Uses Teams SSO when embedded in Teams and browser MSAL otherwise. */
