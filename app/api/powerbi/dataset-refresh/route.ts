@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import chunk from "lodash/chunk";
+import _ from "lodash";
 import { powerBiGet, withPowerBi } from "@/app/lib/admin-request";
 import { cached } from "@/app/lib/server-cache";
 
@@ -33,7 +33,7 @@ export const GET = (req: NextRequest) =>
     }
 
     const entries = await cached(`refresh:${identity.userId}:${groupId}:${ids.join(",")}`, TTL_MS, () =>
-      chunk(ids, BATCH_SIZE).reduce<Promise<Entry[]>>(async (accPromise, batch) => {
+      _.chunk(ids, BATCH_SIZE).reduce<Promise<Entry[]>>(async (accPromise, batch) => {
         const acc = await accPromise;
         // stop calling Power BI as soon as it says "too many requests"
         if (acc.some(([, s]) => s.error === 429)) return acc;
@@ -48,4 +48,3 @@ export const GET = (req: NextRequest) =>
       noAccess: entries.filter(([, s]) => s.error === 401 || s.error === 403).length,
     });
   });
-

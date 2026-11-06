@@ -1,17 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import _ from "lodash";
 import { useWorkspaceData } from "@/hooks/use-workspace-data";
 import { usePinnedWorkspaces } from "@/hooks/use-pinned-workspaces";
 import { buildWorkspaceRows, getTotals, matchesQuery, sortRows } from "@/app/lib/workspace-stats";
 import { YellowHeroLayout } from "@/components/common/YellowHeroLayout";
 import { EmptyBox, ErrorBox, ListSkeleton } from "@/components/common/StateViews";
 import { WorkspaceCard } from "./WorkspaceCard";
+import { NotAdminView } from "./NotAdminView";
 
 type Props = { getToken: () => Promise<string | null> };
 
 export const WorkspacesListView = ({ getToken }: Props) => {
-  const { workspaces, statuses, loading, error, statusMissing, reload } = useWorkspaceData(getToken);
+  const { workspaces, statuses, loading, error, errorCode, statusMissing, reload } =
+    useWorkspaceData(getToken);
   const { isPinned, toggle: togglePin, pinnedIds } = usePinnedWorkspaces();
   const [query, setQuery] = useState("");
 
@@ -33,37 +36,55 @@ export const WorkspacesListView = ({ getToken }: Props) => {
     [visible, isPinned, pinnedIds]
   );
 
-  const headline =
-    loading || error ? undefined : statusMissing ? (
-      <>
-        {totals.datasets} datasets
-        <br />
-        in {totals.workspaces} workspaces
-      </>
-    ) : totals.failed > 0 ? (
-      <>
-        <span className="text-rose-900">{totals.failed} failed</span>
-        <br />
-        of {totals.datasets} datasets
-      </>
-    ) : (
-      <>
-        {totals.datasets} datasets
-        <br />
-        all healthy
-      </>
-    );
+  const isNotAdmin =
+    errorCode === "not_admin" ||
+    (typeof error === "string" &&
+      (error.toLowerCase().includes("not an admin") ||
+        error.toLowerCase().includes("administrator") ||
+        error.toLowerCase().includes("not_admin")));
+
+  const headline = loading ? undefined : isNotAdmin ? (
+    <>
+      Admin access
+      <br />
+      required
+    </>
+  ) : error ? undefined : statusMissing ? (
+    <>
+      {totals.datasets} datasets
+      <br />
+      in {totals.workspaces} workspaces
+    </>
+  ) : totals.failed > 0 ? (
+    <>
+      <span className="text-rose-900">{totals.failed} failed</span>
+      <br />
+      of {totals.datasets} datasets
+    </>
+  ) : (
+    <>
+      {totals.datasets} datasets
+      <br />
+      all healthy
+    </>
+  );
 
   return (
     <YellowHeroLayout
       title="Workspaces"
-      subtitle={`${totals.workspaces} workspaces · ${totals.datasets} datasets`}
+      subtitle={
+        isNotAdmin
+          ? "Access Restricted"
+          : `${totals.workspaces} workspaces · ${totals.datasets} datasets`
+      }
       headline={headline}
       search={{ value: query, onChange: setQuery, placeholder: "Search workspaces" }}
       getToken={getToken}
     >
       {loading ? (
         <ListSkeleton />
+      ) : isNotAdmin ? (
+        <NotAdminView message={error || undefined} onRetry={reload} />
       ) : error ? (
         <ErrorBox message={error} onRetry={reload} />
       ) : visible.length === 0 ? (
@@ -123,4 +144,3 @@ export const WorkspacesListView = ({ getToken }: Props) => {
     </YellowHeroLayout>
   );
 };
-

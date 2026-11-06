@@ -1,10 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import find from "lodash/find";
-import countBy from "lodash/countBy";
-import orderBy from "lodash/orderBy";
-import pickBy from "lodash/pickBy";
+import _ from "lodash";
 import { useWorkspaceData } from "@/hooks/use-workspace-data";
 import { useDatasetRefresh } from "@/hooks/use-dataset-refresh";
 import { classify, matchesQuery } from "@/app/lib/workspace-stats";
@@ -13,6 +10,7 @@ import { YellowHeroLayout } from "@/components/common/YellowHeroLayout";
 import { FilterChips } from "@/components/common/FilterChips";
 import { EmptyBox, ErrorBox, ListSkeleton } from "@/components/common/StateViews";
 import { DatasetRow } from "@/components/dataset/DatasetRow";
+import { NotAdminView } from "./NotAdminView";
 
 const FILTERS = ["All", "Failed", "Refreshing", "Healthy"] as const;
 type Filter = (typeof FILTERS)[number];
@@ -27,11 +25,11 @@ const PRIORITY: Record<HealthKind, number> = { failed: 0, refreshing: 1, healthy
 type Props = { workspaceId: string; getToken: () => Promise<string | null> };
 
 export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
-  const { workspaces, statuses: bulk, loading, error, reload } = useWorkspaceData(getToken);
+  const { workspaces, statuses: bulk, loading, error, errorCode, reload } = useWorkspaceData(getToken);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("All");
 
-  const workspace = useMemo(() => find(workspaces, { id: workspaceId }), [workspaces, workspaceId]);
+  const workspace = useMemo(() => _.find(workspaces, { id: workspaceId }), [workspaces, workspaceId]);
   const datasetIds = useMemo(() => (workspace?.datasets ?? []).map((d) => d.id), [workspace]);
 
   // latest refresh for EVERY dataset in this workspace
@@ -39,7 +37,7 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
 
   // exact per-dataset results win over the bulk status
   const statuses: StatusMap = useMemo(
-    () => ({ ...bulk, ...pickBy(refresh.data?.statuses, (s) => s.error === null && s.status !== null) }),
+    () => ({ ...bulk, ..._.pickBy(refresh.data?.statuses, (s) => s.error === null && s.status !== null) }),
     [bulk, refresh.data]
   );
 
@@ -59,13 +57,26 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
     const filtered = rows.filter(
       (r) => match(r.dataset.name) && (filter === "All" || r.health === KIND_BY_FILTER[filter])
     );
-    return orderBy(filtered, [(r) => PRIORITY[r.health], (r) => r.dataset.name.toLowerCase()], ["asc", "asc"]);
+    return _.orderBy(filtered, [(r) => PRIORITY[r.health], (r) => r.dataset.name.toLowerCase()], ["asc", "asc"]);
   }, [rows, query, filter]);
 
-  const counts = countBy(rows, "health");
+  const counts = _.countBy(rows, "health");
   const hasStatus = rows.some((r) => r.health !== "nodata");
 
-  const headline = !workspace ? undefined : hasStatus ? (
+  const isNotAdmin =
+    errorCode === "not_admin" ||
+    (typeof error === "string" &&
+      (error.toLowerCase().includes("not an admin") ||
+        error.toLowerCase().includes("administrator") ||
+        error.toLowerCase().includes("not_admin")));
+
+  const headline = isNotAdmin ? (
+    <>
+      Admin access
+      <br />
+      required
+    </>
+  ) : !workspace ? undefined : hasStatus ? (
     <>
       {counts.failed ? (
         <span className="text-rose-900">{counts.failed} failed</span>
@@ -103,6 +114,8 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
 
       {loading ? (
         <ListSkeleton height="h-20" />
+      ) : isNotAdmin ? (
+        <NotAdminView message={error || undefined} onRetry={reload} />
       ) : error ? (
         <ErrorBox message={error} onRetry={reload} />
       ) : !workspace ? (
@@ -129,4 +142,3 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
     </YellowHeroLayout>
   );
 };
-

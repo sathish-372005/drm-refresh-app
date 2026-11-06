@@ -1,4 +1,4 @@
-import chunk from "lodash/chunk";
+import _ from "lodash";
 import type {
   DatasetRefreshResponse,
   StatusMap,
@@ -74,11 +74,10 @@ export const fetchDatasetRefresh = (getToken: GetToken, groupId: string, ids: st
     async () =>
       mergeResponses(
         await Promise.all(
-          chunk(ids, IDS_PER_REQUEST).map((part) =>
+          _.chunk(ids, IDS_PER_REQUEST).map((part) =>
             getJson<DatasetRefreshResponse>(`${REFRESH_URL}?groupId=${groupId}&ids=${part.join(",")}`, getToken)
           )
         )
       ),
     force
   );
-

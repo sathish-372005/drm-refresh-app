@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import clamp from "lodash/clamp";
+import _ from "lodash";
 import { powerBiGet, withPowerBi } from "@/app/lib/admin-request";
 import { cached } from "@/app/lib/server-cache";
 
@@ -19,7 +19,7 @@ type AdminGroup = {
 export const GET = (req: NextRequest) =>
   withPowerBi(req, async ({ pbToken, identity }) => {
     const sp = req.nextUrl.searchParams;
-    const top = clamp(Number(sp.get("top")) || 200, 1, 5000);
+    const top = _.clamp(Number(sp.get("top")) || 200, 1, 5000);
     const skip = Math.max(Number(sp.get("skip")) || 0, 0);
     const path = `/admin/groups?$top=${top}&$skip=${skip}&$expand=datasets&$filter=${FILTER}`;
 

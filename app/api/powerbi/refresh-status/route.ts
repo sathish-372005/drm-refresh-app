@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import keyBy from "lodash/keyBy";
-import mapValues from "lodash/mapValues";
+import _ from "lodash";
 import { powerBiGet, withPowerBi } from "@/app/lib/admin-request";
 import { cached } from "@/app/lib/server-cache";
 
@@ -25,7 +24,7 @@ export const GET = (req: NextRequest) =>
       });
 
       const datasets = items.filter((r) => !r.kind || r.kind === "Dataset");
-      const statuses = mapValues(keyBy(datasets, "id"), (r) => ({
+      const statuses = _.mapValues(_.keyBy(datasets, "id"), (r) => ({
         status: r.lastRefresh?.status ?? null,
         endTime: r.lastRefresh?.endTime ?? null,
       }));
