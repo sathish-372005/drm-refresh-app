@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getUser, signIn } from "@/app/lib/auth-client";
+import { detectTeams, getUser, signIn } from "@/app/lib/auth-client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,12 +10,21 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (window.parent !== window) {
-      router.replace("/teams");
-      return;
-    }
+    let cancelled = false;
 
-    getUser().then((user) => user && router.replace("/"));
+    void (async () => {
+      if (await detectTeams()) {
+        if (!cancelled) router.replace("/teams");
+        return;
+      }
+
+      const user = await getUser();
+      if (user && !cancelled) router.replace("/");
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   async function handleSignIn() {

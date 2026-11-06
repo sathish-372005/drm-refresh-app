@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getUser, getAppToken } from "@/app/lib/auth-client";
+import { detectTeams, getUser, getAppToken } from "@/app/lib/auth-client";
 import { PageMain } from "@/components/common/PageMain";
 import { WorkspacesListView } from "@/components/workspace/WorkspacesListView";
 
@@ -11,19 +11,26 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If inside Teams iframe, redirect to /teams
-    if (typeof window !== "undefined" && window.parent !== window) {
-      router.replace("/teams");
-      return;
-    }
+    let cancelled = false;
 
-    getUser().then((user) => {
+    void (async () => {
+      if (await detectTeams()) {
+        if (!cancelled) router.replace("/teams");
+        return;
+      }
+
+      const user = await getUser();
+      if (cancelled) return;
       if (!user) {
         router.replace("/login");
       } else {
         setLoading(false);
       }
-    });
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   if (loading) {
