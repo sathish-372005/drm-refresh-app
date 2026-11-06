@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import StatusBadge from "./StatusBadge";
 import { formatNextSchedule, formatRelativeTime } from "./format-utils";
 import { DatasetItem } from "./types";
+import Image from "next/image";
 
 type Props = {
   dataset: DatasetItem;
@@ -41,7 +42,7 @@ export default function DatasetCard({ dataset, workspaceId, workspaceName }: Pro
 
         {/* Workspace Subtitle */}
         <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Folder className="size-3.5 text-muted-foreground/80" />
+          <Image src="/group.svg" alt="Workspace" width={24} height={24} />
           <span className="truncate">{workspaceName}</span>
         </div>
 

@@ -7,6 +7,7 @@ import type { WorkspaceRow } from "@/app/lib/powerbi-types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HealthBar } from "./HealthBar";
+import Image from "next/image";
 
 type Props = {
   row: WorkspaceRow;
@@ -24,9 +25,7 @@ export const WorkspaceCard = ({ row, isPinned = false, onTogglePin }: Props) => 
       <div className="space-y-4">
         <div className="flex items-start gap-3">
           <Link href={href} className="flex min-w-0 flex-1 items-center gap-3">
-            {/* <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#F2C811]/20 text-[#A16207] dark:text-[#F2C811]">
-              <Folder className="size-5 stroke-[2]" />
-            </span> */}
+            <Image src="/group.svg" alt="Workspace" width={24} height={24} />
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-semibold text-foreground transition-colors group-hover:text-[#A16207] dark:group-hover:text-[#F2C811]">
                 {name}
