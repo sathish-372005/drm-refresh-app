@@ -1,5 +1,6 @@
 import React from "react";
-import { Check, X, Clock, Loader2 } from "lucide-react";
+import { Check, X, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   status?: string | null;
@@ -18,43 +19,44 @@ export default function StatusBadge({ status, className = "", size = "md" }: Pro
 
   if (isFailed) {
     return (
-      <span
+      <Badge
+        variant="destructive"
         className={`inline-flex items-center gap-1 rounded-md border border-[#fecaca] bg-[#fee2e2] font-semibold text-[#dc2626] dark:border-rose-900 dark:bg-rose-950 dark:text-rose-300 ${sizeClasses} ${className}`}
       >
         <X className="size-3 stroke-[2.5]" />
         <span>Failed</span>
-      </span>
+      </Badge>
     );
   }
 
   if (isRefreshing) {
     return (
-      <span
+      <Badge
         className={`inline-flex items-center gap-1 rounded-md border border-[#fef08a] bg-[#fef9c3] font-semibold text-[#a16207] dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300 ${sizeClasses} ${className}`}
       >
         <Loader2 className="size-3 animate-spin stroke-[2.5]" />
         <span>Refreshing</span>
-      </span>
+      </Badge>
     );
   }
 
   if (isCompleted) {
     return (
-      <span
+      <Badge
         className={`inline-flex items-center gap-1 rounded-md border border-[#d1fae5] bg-[#ecfdf5] font-semibold text-[#16a34a] dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 ${sizeClasses} ${className}`}
       >
         <Check className="size-3 stroke-[3]" />
         <span>Completed</span>
-      </span>
+      </Badge>
     );
   }
 
   return (
-    <span
+    <Badge
+      variant="secondary"
       className={`inline-flex items-center gap-1 rounded-md border border-border bg-muted font-medium text-muted-foreground ${sizeClasses} ${className}`}
     >
-      <Clock className="size-3 stroke-[2]" />
-      <span className="capitalize">{status || "Unknown"}</span>
-    </span>
+      <span>{status || "Unknown"}</span>
+    </Badge>
   );
 }

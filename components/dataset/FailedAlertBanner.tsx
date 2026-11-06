@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   failedCount: number;
@@ -27,8 +28,8 @@ export default function FailedAlertBanner({
   const href = `/dataset/${encodeURIComponent(datasetId)}?${query.toString()}`;
 
   return (
-    <div
-      role="alert"
+    <Alert
+      variant="destructive"
       className="flex items-center justify-between gap-3 rounded-2xl border border-[#fecaca] bg-[#fee2e2]/70 p-4 shadow-sm transition hover:bg-[#fee2e2]/85 dark:border-rose-900 dark:bg-rose-950/50 dark:hover:bg-rose-950/70"
     >
       <div className="flex items-start gap-3">
@@ -36,12 +37,12 @@ export default function FailedAlertBanner({
           <AlertTriangle className="size-4 stroke-[2.5]" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-[#991b1b] dark:text-rose-200">
+          <AlertTitle className="text-sm font-semibold text-[#991b1b] dark:text-rose-200">
             {failedCount} refresh failed recently
-          </p>
-          <p className="text-xs text-[#b91c1c]/90 dark:text-rose-300">
+          </AlertTitle>
+          <AlertDescription className="text-xs text-[#b91c1c]/90 dark:text-rose-300">
             {datasetName} · {timeAgo}
-          </p>
+          </AlertDescription>
         </div>
       </div>
       <Link
@@ -50,6 +51,6 @@ export default function FailedAlertBanner({
       >
         View
       </Link>
-    </div>
+    </Alert>
   );
 }

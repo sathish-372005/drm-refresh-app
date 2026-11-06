@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ChevronLeft, Search } from "lucide-react";
 import UserMenu from "@/components/custom/usermenu";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   title: string;
@@ -15,14 +16,22 @@ type Props = {
   children: ReactNode;
 };
 
-export const YellowHeroLayout = ({ title, subtitle, headline, back, search, getToken, children }: Props) => (
+export const YellowHeroLayout = ({
+  title,
+  subtitle,
+  headline,
+  back,
+  search,
+  getToken,
+  children,
+}: Props) => (
   <div className="flex flex-1 flex-col">
     {/* Yellow hero: title, avatar menu, headline, search */}
     <section className="-mx-4 bg-[#F2C811] px-5 pb-14 pt-5 text-[#1F1E1D]">
       {back && (
         <Link
           href={back.href}
-          className="mb-1 flex min-h-[44px] items-center gap-1 text-xs font-semibold text-[#3B3A39] hover:text-[#18181B] transition"
+          className="mb-1 flex min-h-[44px] items-center gap-1 text-xs font-semibold text-[#3B3A39] transition hover:text-[#18181B]"
         >
           <ChevronLeft className="size-4" />
           {back.label}
@@ -46,12 +55,12 @@ export const YellowHeroLayout = ({ title, subtitle, headline, back, search, getT
       <label className="relative mt-5 block">
         <span className="sr-only">{search.placeholder}</span>
         <Search className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" />
-        <input
+        <Input
           type="search"
           value={search.value}
           onChange={(e) => search.onChange(e.target.value)}
           placeholder={search.placeholder}
-          className="h-12 w-full rounded-full border-0 bg-card pl-11 pr-4 text-sm text-card-foreground placeholder:text-muted-foreground shadow-sm outline-none focus:ring-2 focus:ring-[#18181B] dark:focus:ring-white/40 transition"
+          className="h-12 w-full rounded-full border-0 bg-card pl-11 pr-4 text-sm text-card-foreground placeholder:text-muted-foreground shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[#18181B] dark:focus-visible:ring-white/40 transition"
         />
       </label>
     </section>
@@ -62,4 +71,3 @@ export const YellowHeroLayout = ({ title, subtitle, headline, back, search, getT
     </section>
   </div>
 );
-
