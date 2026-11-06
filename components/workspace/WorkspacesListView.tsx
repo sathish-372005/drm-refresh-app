@@ -6,14 +6,14 @@ import { useWorkspaceData } from "@/hooks/use-workspace-data";
 import { usePinnedWorkspaces } from "@/hooks/use-pinned-workspaces";
 import { buildWorkspaceRows, getTotals, matchesQuery, sortRows } from "@/app/lib/workspace-stats";
 import { YellowHeroLayout } from "@/components/common/YellowHeroLayout";
-import { EmptyBox, ErrorBox, ListSkeleton } from "@/components/common/StateViews";
+import { EmptyBox, ErrorBox, WorkspaceListSkeleton } from "@/components/common/StateViews";
 import { WorkspaceCard } from "./WorkspaceCard";
 import { NotAdminView } from "./NotAdminView";
 
 type Props = { getToken: () => Promise<string | null> };
 
 export const WorkspacesListView = ({ getToken }: Props) => {
-  const { workspaces, statuses, loading, error, errorCode, statusMissing, reload } =
+  const { workspaces, statuses, loading, statusesLoading, error, errorCode, statusMissing, reload } =
     useWorkspaceData(getToken);
   const { isPinned, toggle: togglePin, pinnedIds } = usePinnedWorkspaces();
   const [query, setQuery] = useState("");
@@ -43,7 +43,8 @@ export const WorkspacesListView = ({ getToken }: Props) => {
         error.toLowerCase().includes("administrator") ||
         error.toLowerCase().includes("not_admin")));
 
-  const headline = loading ? undefined : isNotAdmin ? (
+  const summaryLoading = loading || statusesLoading;
+  const headline = summaryLoading ? undefined : isNotAdmin ? (
     <>
       Admin access
       <br />
@@ -73,16 +74,19 @@ export const WorkspacesListView = ({ getToken }: Props) => {
     <YellowHeroLayout
       title="Workspaces"
       subtitle={
-        isNotAdmin
-          ? "Access Restricted"
-          : `${totals.workspaces} workspaces · ${totals.datasets} datasets`
+        summaryLoading
+          ? undefined
+          : isNotAdmin
+            ? "Access Restricted"
+            : `${totals.workspaces} workspaces · ${totals.datasets} datasets`
       }
       headline={headline}
+      summaryLoading={summaryLoading}
       search={{ value: query, onChange: setQuery, placeholder: "Search workspaces" }}
       getToken={getToken}
     >
-      {loading ? (
-        <ListSkeleton />
+      {summaryLoading ? (
+        <WorkspaceListSkeleton />
       ) : isNotAdmin ? (
         <NotAdminView message={error || undefined} onRetry={reload} />
       ) : error ? (
@@ -93,14 +97,7 @@ export const WorkspacesListView = ({ getToken }: Props) => {
           text={query ? `No workspaces matched "${query}".` : "No active workspaces were returned."}
         />
       ) : (
-        <>
-          {statusMissing && (
-            <p className="px-1 text-xs text-muted-foreground">
-              Refresh status is unavailable, so failed counts are hidden.
-            </p>
-          )}
-
-          <div className="space-y-4">
+        <div className="space-y-4">
             {/* Pinned section */}
             {pinnedRows.length > 0 && (
               <div className="space-y-2">
@@ -139,8 +136,7 @@ export const WorkspacesListView = ({ getToken }: Props) => {
               </div>
             </div>
           </div>
-        </>
-      )}
+        )}
     </YellowHeroLayout>
   );
 };

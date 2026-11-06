@@ -3,9 +3,8 @@ import type { HealthKind, RefreshState, StatusMap, Workspace, WorkspaceRow } fro
 
 export const classify = (state?: RefreshState): HealthKind => {
   const s = state?.status?.toLowerCase();
-  if (!s) return "nodata";
   if (s === "failed" || s === "disabled") return "failed";
-  if (s === "unknown" || s === "refreshing" || s === "inprogress") return "refreshing"; // Power BI "Unknown" = in progress
+  if (s === "unknown" || s === "refreshing" || s === "inprogress") return "refreshing";
   return "healthy";
 };
 
@@ -19,7 +18,7 @@ export const buildWorkspaceRows = (workspaces: Workspace[], statuses: StatusMap)
       failed: counts.failed ?? 0,
       refreshing: counts.refreshing ?? 0,
       healthy: counts.healthy ?? 0,
-      nodata: counts.nodata ?? 0,
+      nodata: 0,
     };
   });
 

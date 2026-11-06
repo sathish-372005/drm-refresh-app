@@ -5,11 +5,13 @@ import Link from "next/link";
 import { ChevronLeft, Search } from "lucide-react";
 import UserMenu from "@/components/custom/usermenu";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   title: string;
   subtitle?: string;
   headline?: ReactNode;
+  summaryLoading?: boolean;
   back?: { href: string; label: string };
   search: { value: string; onChange: (value: string) => void; placeholder: string };
   getToken: () => Promise<string | null>;
@@ -20,6 +22,7 @@ export const YellowHeroLayout = ({
   title,
   subtitle,
   headline,
+  summaryLoading = false,
   back,
   search,
   getToken,
@@ -41,16 +44,25 @@ export const YellowHeroLayout = ({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h1 className="truncate text-2xl font-bold tracking-tight text-[#18181B]">{title}</h1>
-          {subtitle && <p className="mt-0.5 text-xs text-[#3B3A39]">{subtitle}</p>}
+          {summaryLoading ? (
+            <Skeleton className="mt-1 h-3 w-40 bg-black/10" />
+          ) : (
+            subtitle && <p className="mt-0.5 text-xs text-[#3B3A39]">{subtitle}</p>
+          )}
         </div>
         <UserMenu getToken={getToken} />
       </div>
 
-      {headline && (
+      {summaryLoading ? (
+        <div role="status" aria-label="Loading summary" className="mt-5 space-y-2">
+          <Skeleton className="h-9 w-36 bg-black/10" />
+          <Skeleton className="h-9 w-52 bg-black/10" />
+        </div>
+      ) : headline ? (
         <div className="mt-5 text-[32px] font-bold leading-[1.1] tracking-tight text-[#18181B]">
           {headline}
         </div>
-      )}
+      ) : null}
 
       <label className="relative mt-5 block">
         <span className="sr-only">{search.placeholder}</span>

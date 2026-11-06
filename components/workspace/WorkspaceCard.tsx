@@ -16,9 +16,9 @@ type Props = {
 };
 
 export const WorkspaceCard = ({ row, isPinned = false, onTogglePin }: Props) => {
-  const { id, name, total, healthy, refreshing, failed, nodata } = row;
+  const { id, name, total, healthy, failed } = row;
   const href = `/workspace/${encodeURIComponent(id)}?name=${encodeURIComponent(name)}`;
-  const statusKnown = total > 0 && nodata < total;
+  const hasDatasets = total > 0;
 
   return (
     <Card className="group rounded-2xl border-border bg-card p-4 shadow-sm transition hover:border-[#F2C811]/70 hover:shadow-md">
@@ -30,8 +30,10 @@ export const WorkspaceCard = ({ row, isPinned = false, onTogglePin }: Props) => 
               <span className="block truncate text-sm font-semibold text-foreground transition-colors group-hover:text-[#A16207] dark:group-hover:text-[#F2C811]">
                 {name}
               </span>
-              <span className="mt-1 block text-xs text-muted-foreground">
-                {total} {total === 1 ? "dataset" : "datasets"}
+              <span className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                <span>
+                  {total} {total === 1 ? "dataset" : "datasets"}
+                </span>
               </span>
             </span>
           </Link>
@@ -68,22 +70,19 @@ export const WorkspaceCard = ({ row, isPinned = false, onTogglePin }: Props) => 
                 Completed
               </p>
               <p className="mt-1 text-lg font-semibold leading-none text-emerald-700 dark:text-emerald-400">
-                {statusKnown ? healthy : "—"}
+                {hasDatasets ? healthy : "—"}
               </p>
             </div>
             <div className="rounded-xl bg-rose-500/10 px-3 py-2.5">
               <p className="text-[11px] font-medium text-rose-700 dark:text-rose-400">Failed</p>
               <p className="mt-1 text-lg font-semibold leading-none text-rose-700 dark:text-rose-400">
-                {statusKnown ? failed : "—"}
+                {hasDatasets ? failed : "—"}
               </p>
             </div>
           </div>
 
-          {!statusKnown && (
-           
-            <p className="text-[11px] text-muted-foreground">
-              {total > 0 ? "Refresh status unavailable" : "No datasets"}
-            </p>
+          {!hasDatasets && (
+            <p className="text-[11px] text-muted-foreground">No datasets</p>
           )}
         </Link>
       </div>

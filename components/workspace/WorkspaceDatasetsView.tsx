@@ -7,29 +7,47 @@ import { useDatasetRefresh } from "@/hooks/use-dataset-refresh";
 import { classify, matchesQuery } from "@/app/lib/workspace-stats";
 import type { HealthKind, StatusMap } from "@/app/lib/powerbi-types";
 import { YellowHeroLayout } from "@/components/common/YellowHeroLayout";
-import { FilterChips } from "@/components/common/FilterChips";
-import { EmptyBox, ErrorBox, ListSkeleton } from "@/components/common/StateViews";
+import { ChipTone, FilterChips } from "@/components/common/FilterChips";
+import {
+  EmptyBox,
+  ErrorBox,
+  FilterChipsSkeleton,
+  ListSkeleton,
+} from "@/components/common/StateViews";
 import { DatasetRow } from "@/components/dataset/DatasetRow";
 import FailedAlertBanner from "@/components/dataset/FailedAlertBanner";
 import { formatRelativeTime } from "@/components/dataset/format-utils";
 import { NotAdminView } from "./NotAdminView";
 
-const FILTERS = ["All", "Failed", "Refreshing", "Healthy"] as const;
+const FILTERS = ["Completed", "Refreshing", "Failed"] as const;
 type Filter = (typeof FILTERS)[number];
 
-const KIND_BY_FILTER: Record<Exclude<Filter, "All">, HealthKind> = {
-  Failed: "failed",
+const KIND_BY_FILTER: Record<Filter, HealthKind> = {
+  Completed: "healthy",
   Refreshing: "refreshing",
-  Healthy: "healthy",
+  Failed: "failed",
+};
+const FILTER_TONES: Record<Filter, ChipTone> = {
+  Completed: "green",
+  Refreshing: "amber",
+  Failed: "red",
 };
 const PRIORITY: Record<HealthKind, number> = { failed: 0, refreshing: 1, healthy: 2, nodata: 3 };
 
 type Props = { workspaceId: string; getToken: () => Promise<string | null> };
 
 export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
-  const { workspaces, statuses: bulk, loading, error, errorCode, reload } = useWorkspaceData(getToken);
+  const {
+    workspaces,
+    statuses: bulk,
+    loading,
+    statusesLoading,
+    error,
+    errorCode,
+    reload,
+  } = useWorkspaceData(getToken);
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<Filter>("All");
+  const [filter, setFilter] = useState<Filter | null>(null);
 
   const workspace = useMemo(() => _.find(workspaces, { id: workspaceId }), [workspaces, workspaceId]);
   const datasetIds = useMemo(() => (workspace?.datasets ?? []).map((d) => d.id), [workspace]);
@@ -62,7 +80,7 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
   const visible = useMemo(() => {
     const match = matchesQuery(query);
     const filtered = rows.filter(
-      (r) => match(r.dataset.name) && (filter === "All" || r.health === KIND_BY_FILTER[filter])
+      (r) => match(r.dataset.name) && (!filter || r.health === KIND_BY_FILTER[filter])
     );
     return _.orderBy(filtered, [(r) => PRIORITY[r.health], (r) => r.dataset.name.toLowerCase()], ["asc", "asc"]);
   }, [rows, query, filter]);
@@ -113,26 +131,50 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
     !!refresh.data?.noAccess && `${refresh.data.noAccess} datasets: no access to refresh data.`,
   ].filter(Boolean) as string[];
 
+  const chipCounts = {
+    Completed: counts.healthy ?? 0,
+    Refreshing: counts.refreshing ?? 0,
+    Failed: counts.failed ?? 0,
+  };
+  const summaryLoading =
+    loading ||
+    statusesLoading ||
+    (!workspace && !error) ||
+    (datasetIds.length > 0 && (refresh.loading || (!refresh.data && !refresh.error)));
+
   return (
     <YellowHeroLayout
       title={workspace?.name ?? "Datasets"}
       subtitle={
-        isNotAdmin
-          ? "Access Restricted"
-          : workspace
-          ? `${refreshableCount} refreshable · updated just now`
-          : undefined
+        summaryLoading
+          ? undefined
+          : isNotAdmin
+            ? "Access Restricted"
+            : workspace
+              ? `${totalCount} ${totalCount === 1 ? "dataset" : "datasets"} · updated just now`
+              : undefined
       }
       headline={headline}
+      summaryLoading={summaryLoading}
       back={{ href: "/", label: "Workspaces" }}
       search={{ value: query, onChange: setQuery, placeholder: "Search datasets or workspaces" }}
       getToken={getToken}
     >
       {/* Filter Pills with Power BI Yellow active state */}
-      <FilterChips options={FILTERS} value={filter} onChange={setFilter} />
+      {summaryLoading ? (
+        <FilterChipsSkeleton />
+      ) : (
+        <FilterChips
+          options={FILTERS}
+          value={filter}
+          onChange={setFilter}
+          counts={chipCounts}
+          tones={FILTER_TONES}
+        />
+      )}
 
       {/* Failed Alert Banner */}
-      {failedRow && (
+      {!summaryLoading && failedRow && (
         <FailedAlertBanner
           failedCount={failedCount || 1}
           datasetName={failedRow.dataset.name}
@@ -149,7 +191,7 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
         </p>
       ))}
 
-      {loading ? (
+      {summaryLoading ? (
         <ListSkeleton height="h-24" />
       ) : isNotAdmin ? (
         <NotAdminView message={error || undefined} onRetry={reload} />
