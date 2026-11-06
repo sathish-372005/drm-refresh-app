@@ -2,10 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getUser, getWebToken } from "@/app/lib/auth-client";
-import DatasetsListView from "@/components/dataset/DatasetsListView";
+import { getUser, getAppToken } from "@/app/lib/auth-client";
+import { PageMain } from "@/components/common/PageMain";
+import { WorkspacesListView } from "@/components/workspace/WorkspacesListView";
 
-export default function Home() {
+const Home = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
@@ -34,8 +35,10 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background px-4 pb-20 pt-0 text-foreground">
-      <DatasetsListView getToken={getWebToken} />
-    </main>
+    <PageMain>
+      <WorkspacesListView getToken={getAppToken} />
+    </PageMain>
   );
-}
+};
+
+export default Home;

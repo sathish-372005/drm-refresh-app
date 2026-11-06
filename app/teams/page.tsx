@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import DatasetsListView from "@/components/dataset/DatasetsListView";
 import { getAppToken, initializeTeams } from "@/app/lib/auth-client";
+import { PageMain } from "@/components/common/PageMain";
+import { WorkspacesListView } from "@/components/workspace/WorkspacesListView";
 
 export default function TeamsPage() {
   const [ready, setReady] = useState(false);
@@ -33,8 +34,8 @@ export default function TeamsPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-md bg-background p-4 pb-20 pt-6 text-foreground">
-      <DatasetsListView getToken={getAppToken} />
-    </main>
+    <PageMain>
+      <WorkspacesListView getToken={getAppToken} />
+    </PageMain>
   );
 }

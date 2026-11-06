@@ -2,16 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Database, Activity, Bell, User } from "lucide-react";
+import { Home, Activity, Bell } from "lucide-react";
 
 const NAV_ITEMS = [
   {
-    href: "/dataset",
-    label: "Datasets",
-    icon: Database,
+    href: "/alerts",
+    label: "Alerts",
+    icon: Bell,
+    isActive: (pathname: string) =>
+      pathname === "/alerts" || pathname.startsWith("/alerts/"),
+  },
+  {
+    href: "/",
+    label: "Home",
+    icon: Home,
     isActive: (pathname: string) =>
       pathname === "/" ||
+      pathname === "/home" ||
       pathname === "/teams" ||
+      pathname.startsWith("/workspace/") ||
       pathname === "/dataset" ||
       pathname.startsWith("/dataset/"),
   },
@@ -22,21 +31,6 @@ const NAV_ITEMS = [
     isActive: (pathname: string) =>
       pathname === "/history" || pathname.startsWith("/history/"),
   },
-  {
-    href: "/alerts",
-    label: "Alerts",
-    icon: Bell,
-    isActive: (pathname: string) =>
-      pathname === "/alerts" || pathname.startsWith("/alerts/"),
-  },
-  {
-    href: "/admin-test",
-    label: "admin",
-    icon: Bell,
-    isActive: (pathname: string) =>
-      pathname === "/admin-test" || pathname.startsWith("/admin-test/"),
-  },
-  
 ];
 
 export default function BottomNav() {
@@ -67,13 +61,10 @@ export default function BottomNav() {
               <span className="relative block size-7">
                 {active ? (
                   <span className="absolute -top-4 left-1/2 flex size-11 -translate-x-1/2 items-center justify-center rounded-full bg-[#F2C811] text-[#18181B] shadow-md shadow-[#F2C811]/40 ring-[3px] ring-background">
-  <Icon className="size-5" strokeWidth={2.4} />
-</span>
+                    <Icon className="size-5" strokeWidth={2.4} />
+                  </span>
                 ) : (
-                  <Icon
-                    className="size-7 text-muted-foreground"
-                    strokeWidth={1.8}
-                  />
+                  <Icon className="size-7 text-muted-foreground" strokeWidth={1.8} />
                 )}
               </span>
 
