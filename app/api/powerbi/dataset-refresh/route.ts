@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import _ from "lodash";
 import { powerBiGet, withPowerBi } from "@/app/lib/admin-request";
 import { cached } from "@/app/lib/server-cache";
+import type { RefreshSchedule } from "@/app/lib/powerbi-types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,14 +13,34 @@ const MAX_IDS = 100;
 const TTL_MS = 5 * 60_000;
 
 type Refresh = { status?: string; startTime?: string; endTime?: string };
-type DatasetState = { status: string | null; endTime: string | null; error: number | null };
+type DatasetState = {
+  status: string | null;
+  startTime: string | null;
+  endTime: string | null;
+  schedule: RefreshSchedule | null;
+  error: number | null;
+};
 type Entry = readonly [string, DatasetState];
 
 const fetchLatest = async (pbToken: string, groupId: string, id: string): Promise<Entry> => {
-  const result = await powerBiGet<{ value?: Refresh[] }>(pbToken, `/groups/${groupId}/datasets/${id}/refreshes?$top=1`);
-  if (!result.ok) return [id, { status: null, endTime: null, error: result.response.status }];
-  const last = result.data.value?.[0];
-  return [id, { status: last?.status ?? null, endTime: last?.endTime ?? last?.startTime ?? null, error: null }];
+  const [refResult, schedResult] = await Promise.all([
+    powerBiGet<{ value?: Refresh[] }>(pbToken, `/groups/${groupId}/datasets/${id}/refreshes?$top=1`),
+    powerBiGet<RefreshSchedule>(pbToken, `/groups/${groupId}/datasets/${id}/refreshSchedule`).catch(() => null),
+  ]);
+
+  const last = refResult.ok ? refResult.data.value?.[0] : null;
+  const schedule = schedResult && schedResult.ok ? schedResult.data : null;
+
+  return [
+    id,
+    {
+      status: last?.status ?? null,
+      startTime: last?.startTime ?? null,
+      endTime: last?.endTime ?? last?.startTime ?? null,
+      schedule: schedule ?? null,
+      error: refResult.ok ? null : refResult.response.status,
+    },
+  ];
 };
 
 export const GET = (req: NextRequest) =>

@@ -19,7 +19,20 @@ export type WorkspaceListResponse = {
   hasMore: boolean;
 };
 
-export type RefreshState = { status: string | null; endTime: string | null };
+export type RefreshSchedule = {
+  enabled?: boolean;
+  days?: string[];
+  times?: string[];
+  localTimeZoneId?: string;
+};
+
+export type RefreshState = {
+  status: string | null;
+  startTime?: string | null;
+  endTime: string | null;
+  schedule?: RefreshSchedule | null;
+};
+
 export type StatusMap = Record<string, RefreshState>;
 export type StatusResponse = { statuses: StatusMap };
 
@@ -40,4 +53,3 @@ export type WorkspaceRow = {
   healthy: number;
   nodata: number;
 };
-

@@ -10,6 +10,8 @@ import { YellowHeroLayout } from "@/components/common/YellowHeroLayout";
 import { FilterChips } from "@/components/common/FilterChips";
 import { EmptyBox, ErrorBox, ListSkeleton } from "@/components/common/StateViews";
 import { DatasetRow } from "@/components/dataset/DatasetRow";
+import FailedAlertBanner from "@/components/dataset/FailedAlertBanner";
+import { formatRelativeTime } from "@/components/dataset/format-utils";
 import { NotAdminView } from "./NotAdminView";
 
 const FILTERS = ["All", "Failed", "Refreshing", "Healthy"] as const;
@@ -35,7 +37,7 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
   // latest refresh for EVERY dataset in this workspace
   const refresh = useDatasetRefresh(getToken, workspace?.id, datasetIds);
 
-  // exact per-dataset results win over the bulk status
+  // exact per-dataset results win over bulk status
   const statuses: StatusMap = useMemo(
     () => ({ ...bulk, ..._.pickBy(refresh.data?.statuses, (s) => s.error === null && s.status !== null) }),
     [bulk, refresh.data]
@@ -43,12 +45,17 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
 
   const rows = useMemo(
     () =>
-      (workspace?.datasets ?? []).map((dataset) => ({
-        dataset,
-        status: statuses[dataset.id]?.status ?? null,
-        endTime: statuses[dataset.id]?.endTime ?? null,
-        health: classify(statuses[dataset.id]),
-      })),
+      (workspace?.datasets ?? []).map((dataset) => {
+        const s = statuses[dataset.id];
+        return {
+          dataset,
+          status: s?.status ?? null,
+          startTime: s?.startTime ?? null,
+          endTime: s?.endTime ?? null,
+          schedule: s?.schedule ?? null,
+          health: classify(s),
+        };
+      }),
     [workspace, statuses]
   );
 
@@ -61,7 +68,10 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
   }, [rows, query, filter]);
 
   const counts = _.countBy(rows, "health");
-  const hasStatus = rows.some((r) => r.health !== "nodata");
+  const failedCount = counts.failed ?? 0;
+  const healthyCount = counts.healthy ?? 0;
+  const totalCount = rows.length;
+  const refreshableCount = rows.filter((r) => r.dataset.isRefreshable !== false).length;
 
   const isNotAdmin =
     errorCode === "not_admin" ||
@@ -70,23 +80,31 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
         error.toLowerCase().includes("administrator") ||
         error.toLowerCase().includes("not_admin")));
 
+  // Headline like the old UI: "6 of 12 datasets healthy" or "1 of 12 datasets failed"
   const headline = isNotAdmin ? (
     <>
       Admin access
       <br />
       required
     </>
-  ) : !workspace ? undefined : hasStatus ? (
+  ) : !workspace || totalCount === 0 ? undefined : failedCount > 0 ? (
     <>
-      {counts.failed ? (
-        <span className="text-rose-900">{counts.failed} failed</span>
-      ) : (
-        <span>{rows.length} healthy</span>
-      )}
+      <span className="text-rose-900">{failedCount}</span> of {totalCount}
       <br />
-      of {rows.length} datasets
+      datasets failed
     </>
-  ) : undefined;
+  ) : (
+    <>
+      {healthyCount} of {totalCount}
+      <br />
+      datasets healthy
+    </>
+  );
+
+  // Failed alert banner for the most recently failed dataset
+  const failedRow = useMemo(() => {
+    return rows.find((r) => r.health === "failed");
+  }, [rows]);
 
   const notices = [
     refresh.loading && "Loading refresh status…",
@@ -97,14 +115,33 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
 
   return (
     <YellowHeroLayout
-      title={workspace?.name ?? "Workspace"}
-      subtitle={workspace ? `${rows.length} datasets` : undefined}
+      title={workspace?.name ?? "Datasets"}
+      subtitle={
+        isNotAdmin
+          ? "Access Restricted"
+          : workspace
+          ? `${refreshableCount} refreshable · updated just now`
+          : undefined
+      }
       headline={headline}
       back={{ href: "/", label: "Workspaces" }}
-      search={{ value: query, onChange: setQuery, placeholder: "Search datasets" }}
+      search={{ value: query, onChange: setQuery, placeholder: "Search datasets or workspaces" }}
       getToken={getToken}
     >
-      {hasStatus && <FilterChips options={FILTERS} value={filter} onChange={setFilter} />}
+      {/* Filter Pills with Power BI Yellow active state */}
+      <FilterChips options={FILTERS} value={filter} onChange={setFilter} />
+
+      {/* Failed Alert Banner */}
+      {failedRow && (
+        <FailedAlertBanner
+          failedCount={failedCount || 1}
+          datasetName={failedRow.dataset.name}
+          timeAgo={formatRelativeTime(failedRow.startTime || failedRow.endTime || undefined)}
+          datasetId={failedRow.dataset.id}
+          workspaceId={workspace?.id}
+          workspaceName={workspace?.name}
+        />
+      )}
 
       {notices.map((text) => (
         <p key={text} className="px-1 text-xs text-muted-foreground">
@@ -113,7 +150,7 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
       ))}
 
       {loading ? (
-        <ListSkeleton height="h-20" />
+        <ListSkeleton height="h-24" />
       ) : isNotAdmin ? (
         <NotAdminView message={error || undefined} onRetry={reload} />
       ) : error ? (
@@ -127,14 +164,16 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
         />
       ) : (
         <div className="space-y-3">
-          {visible.map(({ dataset, status, endTime }) => (
+          {visible.map(({ dataset, status, startTime, endTime, schedule }) => (
             <DatasetRow
               key={dataset.id}
               dataset={dataset}
               workspaceId={workspace.id}
               workspaceName={workspace.name}
               status={status}
+              startTime={startTime}
               endTime={endTime}
+              schedule={schedule}
             />
           ))}
         </div>
