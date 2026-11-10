@@ -1,5 +1,7 @@
 export type RefreshStatus = "Completed" | "Failed" | "Refreshing" | "InProgress" | "Unknown";
 
+export type FilterCategory = "All" | "Failed" | "Refreshing" | "Healthy";
+
 export type RefreshRun = {
   id: string | number;
   refreshType: "Scheduled" | "ViaApi" | string;

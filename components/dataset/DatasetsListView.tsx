@@ -3,10 +3,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Database, Search } from "lucide-react";
 import DatasetCard from "./DatasetCard";
-import { FilterCategory } from "./DatasetSearchAndFilter";
 import FailedAlertBanner from "./FailedAlertBanner";
 import { formatRelativeTime } from "./format-utils";
-import { DatasetsResponse, DatasetItem } from "./types";
+import { DatasetsResponse, DatasetItem, FilterCategory } from "./types";
 import UserMenu from "../custom/usermenu";
 
 const API_URL = "/api/powerbi/datasets";
