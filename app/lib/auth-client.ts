@@ -25,13 +25,24 @@ const powerBiScopes = [
 
 let clientPromise: Promise<PublicClientApplication> | null = null;
 let teamsInitialization: Promise<void> | null = null;
+let teamsInitialized = false;
+
+export function isTeamsInitialized() {
+  return teamsInitialized;
+}
 
 export function initializeTeams() {
   if (!teamsInitialization) {
-    teamsInitialization = teamsApp.initialize().catch((error: unknown) => {
-      teamsInitialization = null;
-      throw error;
-    });
+    teamsInitialization = teamsApp
+      .initialize()
+      .then(() => {
+        teamsInitialized = true;
+      })
+      .catch((error: unknown) => {
+        teamsInitialization = null;
+        teamsInitialized = false;
+        throw error;
+      });
   }
   return teamsInitialization;
 }
