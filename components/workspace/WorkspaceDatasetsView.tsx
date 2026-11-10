@@ -89,7 +89,6 @@ export const WorkspaceDatasetsView = ({ workspaceId, getToken }: Props) => {
   const failedCount = counts.failed ?? 0;
   const healthyCount = counts.healthy ?? 0;
   const totalCount = rows.length;
-  const refreshableCount = rows.filter((r) => r.dataset.isRefreshable !== false).length;
 
   const isNotAdmin =
     errorCode === "not_admin" ||

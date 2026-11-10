@@ -37,9 +37,9 @@ const getJson = async <T>(url: string, getToken: GetToken): Promise<T> => {
   const body = await res.json().catch(() => null);
   if (!res.ok) {
     const message = body?.message || body?.error || `Request failed (HTTP ${res.status})`;
-    const error = new Error(message);
-    (error as any).code = body?.error;
-    (error as any).status = res.status;
+    const error = new Error(message) as Error & { code?: string; status?: number };
+    error.code = body?.error;
+    error.status = res.status;
     throw error;
   }
   return body as T;

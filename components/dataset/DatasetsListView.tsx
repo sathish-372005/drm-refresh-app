@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { RotateCw, Database, Search } from "lucide-react";
+import { Database, Search } from "lucide-react";
 import DatasetCard from "./DatasetCard";
 import { FilterCategory } from "./DatasetSearchAndFilter";
 import FailedAlertBanner from "./FailedAlertBanner";
@@ -35,10 +35,9 @@ export default function DatasetsListView({ getToken }: Props) {
   }, [getToken]);
 
   async function loadDatasets() {
-    setLoading(true);
-    setError(null);
     try {
       const token = await getTokenRef.current();
+      setError(null);
       if (!token) throw new Error("Please sign in to view your datasets.");
 
       const response = await fetch(API_URL, {
@@ -62,7 +61,6 @@ export default function DatasetsListView({ getToken }: Props) {
 
   useEffect(() => {
     void loadDatasets();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const allDatasets = useMemo(() => {

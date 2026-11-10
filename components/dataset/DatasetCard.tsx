@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ChevronRight, Folder } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import StatusBadge from "./StatusBadge";
 import { formatNextSchedule, formatRelativeTime } from "./format-utils";

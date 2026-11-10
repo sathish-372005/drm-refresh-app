@@ -17,10 +17,10 @@ export default function Workspaces({ getToken, onUnauthenticated, onConsent }: P
   const [error, setError] = useState("");
 
   async function load() {
-    setError("");
-    setNeedConsent(false);
     try {
       const token = await getToken();
+      setError("");
+      setNeedConsent(false);
       if (!token) return onUnauthenticated?.();
 
       const res = await fetch("/api/powerbi/workspace", {

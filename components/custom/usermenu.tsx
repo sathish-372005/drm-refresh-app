@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -47,11 +47,10 @@ function decodeJwtUser(token: string): { name?: string; email?: string } | null 
 
 export default function UserMenu({ getToken }: Props) {
   const [me, setMe] = useState<Me | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
-    setMounted(true);
     let active = true;
 
     async function loadUser() {

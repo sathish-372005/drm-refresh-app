@@ -3,10 +3,16 @@
 import { useState } from "react";
 import { getAppToken } from "@/app/lib/auth-client";
 
+type TestWorkspace = {
+  id?: string;
+  name?: string;
+  datasets?: unknown[];
+};
+
 export default function AdminTestPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<number | null>(null);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function run() {
@@ -31,7 +37,9 @@ export default function AdminTestPage() {
     }
   }
 
-  const workspaces: any[] = result?.workspaces ?? [];
+  const workspaces: TestWorkspace[] = Array.isArray(result?.workspaces)
+    ? (result.workspaces as TestWorkspace[])
+    : [];
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-md space-y-4 bg-background p-4 pb-24 pt-6 text-foreground">
@@ -55,10 +63,10 @@ export default function AdminTestPage() {
 
       {error && <p className="text-sm text-rose-600">{error}</p>}
 
-      {workspaces.slice(0, 5).map((w) => (
-        <div key={w.id} className="rounded-xl border border-border bg-card p-3 text-sm">
-          <p className="font-semibold">{w.name}</p>
-          <p className="text-xs text-muted-foreground">{w.datasets.length} datasets</p>
+      {workspaces.slice(0, 5).map((w, idx) => (
+        <div key={w.id ?? idx} className="rounded-xl border border-border bg-card p-3 text-sm">
+          <p className="font-semibold">{w.name ?? "Untitled"}</p>
+          <p className="text-xs text-muted-foreground">{(w.datasets ?? []).length} datasets</p>
         </div>
       ))}
 

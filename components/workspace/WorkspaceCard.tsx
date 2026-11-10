@@ -2,11 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-import { Folder, Pin } from "lucide-react";
+import { Pin } from "lucide-react";
 import type { WorkspaceRow } from "@/app/lib/powerbi-types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { HealthBar } from "./HealthBar";
 import Image from "next/image";
 
 type Props = {

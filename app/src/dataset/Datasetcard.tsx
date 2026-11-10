@@ -118,7 +118,7 @@ export default function DatasetCard({
       )}
       {refreshState === "error" && (
         <p role="alert" className="mt-2 pl-2 text-xs text-destructive">
-          Couldn't start the refresh. Try again.
+          Couldn&apos;t start the refresh. Try again.
         </p>
       )}
     </article>

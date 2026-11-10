@@ -1,22 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 const STORAGE_KEY = "powerbi-pinned-workspaces:v1";
 
 export const usePinnedWorkspaces = () => {
-  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
-
-  useEffect(() => {
+  const [pinnedIds, setPinnedIds] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setPinnedIds(JSON.parse(stored));
-      }
+      return stored ? JSON.parse(stored) : [];
     } catch {
-      // ignore
+      return [];
     }
-  }, []);
+  });
 
   const toggle = useCallback((id: string) => {
     setPinnedIds((prev) => {

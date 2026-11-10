@@ -34,10 +34,10 @@ export default function DatasetDetailView({
 
   async function loadData() {
     try {
-      setLoading(true);
       setFetchError(null);
       const token = await getToken();
       if (!token) {
+        setLoading(false);
         setFetchError("Please sign in to view refresh history.");
         return;
       }

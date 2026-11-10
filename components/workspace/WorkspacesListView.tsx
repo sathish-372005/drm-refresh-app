@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import _ from "lodash";
 import { useWorkspaceData } from "@/hooks/use-workspace-data";
 import { usePinnedWorkspaces } from "@/hooks/use-pinned-workspaces";
 import { buildWorkspaceRows, getTotals, matchesQuery, sortRows } from "@/app/lib/workspace-stats";
@@ -15,7 +14,7 @@ type Props = { getToken: () => Promise<string | null> };
 export const WorkspacesListView = ({ getToken }: Props) => {
   const { workspaces, statuses, loading, statusesLoading, error, errorCode, statusMissing, reload } =
     useWorkspaceData(getToken);
-  const { isPinned, toggle: togglePin, pinnedIds } = usePinnedWorkspaces();
+  const { isPinned, toggle: togglePin } = usePinnedWorkspaces();
   const [query, setQuery] = useState("");
 
   const rows = useMemo(() => buildWorkspaceRows(workspaces, statuses), [workspaces, statuses]);
@@ -28,12 +27,12 @@ export const WorkspacesListView = ({ getToken }: Props) => {
 
   const pinnedRows = useMemo(
     () => visible.filter((r) => isPinned(r.id)),
-    [visible, isPinned, pinnedIds]
+    [visible, isPinned]
   );
 
   const unpinnedRows = useMemo(
     () => visible.filter((r) => !isPinned(r.id)),
-    [visible, isPinned, pinnedIds]
+    [visible, isPinned]
   );
 
   const isNotAdmin =

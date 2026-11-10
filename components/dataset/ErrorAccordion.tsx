@@ -19,7 +19,7 @@ type Props = {
 export default function ErrorAccordion({ error, className = "", defaultOpen = false }: Props) {
   if (!error) return null;
 
-  const { code, message, advice, raw } = parsePowerBiErrorDetails(error);
+  const { code, message, advice } = parsePowerBiErrorDetails(error);
 
   return (
     <div className={`w-full overflow-hidden ${className}`}>

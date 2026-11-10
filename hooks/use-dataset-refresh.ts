@@ -15,12 +15,8 @@ export const useDatasetRefresh = (
   const key = ids.join(",");
 
   useEffect(() => {
-    if (!groupId || ids.length === 0) {
-      setState({ data: null, loading: false, error: null });
-      return;
-    }
+    if (!groupId || ids.length === 0) return;
     let cancelled = false;
-    setState((prev) => ({ ...prev, loading: true, error: null }));
 
     fetchDatasetRefresh(getToken, groupId, ids)
       .then((data) => !cancelled && setState({ data, loading: false, error: null }))
@@ -33,8 +29,11 @@ export const useDatasetRefresh = (
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getToken, groupId, key]);
+  }, [getToken, groupId, ids, key]);
+
+  if (!groupId || ids.length === 0) {
+    return { data: null, loading: false, error: null };
+  }
 
   return state;
 };
